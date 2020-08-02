@@ -6,7 +6,7 @@ The app can only store todo items in memory and offers three endpoints:
 
 ```http
 GET /healthz
-POST /tasks/
+POST /tasks
 GET /tasks
 ```
 
