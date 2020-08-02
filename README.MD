@@ -12,17 +12,17 @@ GET /tasks
 
 The `healthz` endpoint is used by Kubernetes to check the deployed pods for their health.
 
-## Prerequisites to run locally
-
-- Docker installed
-- A Docker container registry to push the App image which you will have to replace in the Makefile
-
 To run locally simply execute:
 
 ```bash
 export FLASK_APP=app
 flask run
 ```
+
+## Prerequisites to run locally
+
+- Docker installed
+- A Docker container registry to push the App image which you will have to replace in the Makefile
 
 ## Prerequisites to deploy on Kubernetes
 
