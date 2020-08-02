@@ -19,6 +19,24 @@ export FLASK_APP=app
 flask run
 ```
 
+## Makefile
+
+The Makefile can be used to build a Docker image and push it to the Docker container registry of your choice. Please ensure you have replaced the registry in the Makefile before you run any command.
+
+To build an image simply run:
+```bash
+make build
+make tag
+```
+If you wish to push the image to AWS ECR first login:
+```bash
+aws ecr get-login-password — region eu-west-2 | docker login — username AWS — password-stdin <aws_account_id>.dkr.ecr<region>.amazonaws.com
+```
+and then execute:
+```bash
+make push
+```
+
 ## Prerequisites to run locally
 
 - Docker installed
