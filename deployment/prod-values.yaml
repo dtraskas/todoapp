@@ -19,4 +19,5 @@ ingress:
   path: /todoapp
   hosts:
     - localhost
-    - a89aceab4e5e942ce953843a70c0c267-34e0936d2216453f.elb.eu-west-2.amazonaws.com
+    # TODO to be replaced with your Elastic Load Balancer
+    - <replace with your ELB>

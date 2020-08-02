@@ -1,4 +1,4 @@
-REGISTRY=430153336777.dkr.ecr.eu-west-2.amazonaws.com
+REGISTRY=<TODO replace with your Docker registry>
 VERSION ?= latest
 IMAGE_NAME ?= todoapp
 CONTAINER_NAME ?= todoapp
