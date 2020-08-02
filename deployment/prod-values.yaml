@@ -1,0 +1,22 @@
+replicaCount: 3
+
+image:
+  tag: "latest"
+  pullPolicy: "Always"
+    
+api:
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+  env:
+    # Number of desired Gunicorn workers
+    GUNICORN_WORKERS: "1"      
+
+ingress:
+  enabled: true
+  path: /todoapp
+  hosts:
+    - localhost
+    - a89aceab4e5e942ce953843a70c0c267-34e0936d2216453f.elb.eu-west-2.amazonaws.com

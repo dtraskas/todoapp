@@ -1,0 +1,141 @@
+{{- $chart_name := .Chart.Name }}
+{{- $chart_version := .Chart.Version | replace "+" "_" }}
+{{- $release_name := .Release.Name }}
+{{- $release_service := .Release.Service }}
+{{- $api := .Values.api }}
+{{- $image := .Values.image }}
+{{- $generic_env := .Values.env }}
+{{- $ingressPath := .Values.ingress.path -}}
+{{- $replicas := int .Values.replicaCount -}}
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $release_name }}
+  labels:
+    app.kubernetes.io/name: {{ include "todoapp.name" . }}
+    helm.sh/chart: "{{ $chart_name }}-{{ $chart_version }}"
+    app.kubernetes.io/instance: {{ $release_name }}
+    app.kubernetes.io/managed-by: {{ $release_service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+{{ if gt $replicas 1 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+{{ end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "todoapp.name" . }}
+      app.kubernetes.io/instance: {{ $release_name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "todoapp.name" . }}
+        app.kubernetes.io/instance: {{ $release_name }}
+{{- with .Values.podAnnotations }}
+      annotations:  
+{{ toYaml . | indent 8 }}
+{{- end }}        
+    spec:    
+      serviceAccountName: {{ $api.serviceAccount }}
+      containers:
+        - name: {{ $release_name }}
+          image: "{{ $image.repository }}:{{ $image.tag }}"
+          imagePullPolicy: {{ $image.pullPolicy }}
+          env:
+          {{- with $api.secretEnv }}
+{{ toYaml . | indent 12 }}
+          {{- end }}
+{{- if .Values.ingress.enabled }}
+            - name: SERVER_BASE
+              value: {{ $ingressPath | quote }}
+{{- end }} 
+          {{- range $key, $value :=  $generic_env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+          {{- range $key, $value :=  $api.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 5001
+              protocol: TCP
+{{- if .Values.api.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+{{- if .Values.ingress.enabled }}
+              path: {{ .Values.ingress.path }}/api/v1/healthz
+{{- else if $generic_env }}
+              path: {{ $generic_env.SERVER_BASE | default "" }}/api/v1/healthz
+{{- else }}
+              path: /api/v1/healthz
+{{- end }}
+              port: http
+            initialDelaySeconds: {{ .Values.api.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.api.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.api.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.api.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.api.livenessProbe.failureThreshold }}
+{{- end }}
+{{- if .Values.api.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+{{- if .Values.ingress.enabled }}
+              path: {{ .Values.ingress.path }}/api/v1/healthz
+{{- else if $generic_env }}
+              path: {{ $generic_env.SERVER_BASE | default "" }}/api/v1/healthz
+{{- else }}
+              path: /api/v1/healthz
+{{- end }}
+              port: http
+            initialDelaySeconds: {{ .Values.api.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.api.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.api.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.api.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.api.readinessProbe.failureThreshold }}
+{{- end }}
+          resources:
+            {{- toYaml $api.resources | nindent 12 }}
+      {{- with $api.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      affinity:
+        {{- if eq $api.antiAffinity "hard" }}
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - "{{ include "todoapp.name" . }}"
+              topologyKey: {{ $api.antiAffinityTopologyKey }}
+        {{- else if eq $api.antiAffinity "soft" }}
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: {{ $api.antiAffinityTopologyKey }}
+                labelSelector:
+                  matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                    - "{{ include "todoapp.name" . }}"
+        {{- end }}
+
+    {{- with $api.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
