@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 430153336777.dkr.ecr.eu-west-2.amazonaws.com/todoapp
+  repository: <TODO replace with your Docker registry>/todoapp
   tag: "latest"
   pullPolicy: Always
   

@@ -21,7 +21,7 @@ flask run
 
 ## Makefile
 
-The Makefile can be used to build a Docker image and push it to the Docker container registry of your choice. Please ensure you have replaced the registry in the Makefile before you run any command.
+The Makefile can be used to build a Docker image and push it to the Docker container registry of your choice. Please ensure you have replaced the registry in the Makefile before you run any command. You will also need to replace the Docker registry in the `deployment/todoapp/values.yaml`.
 
 To build an image simply run:
 ```bash
