@@ -37,17 +37,14 @@ and then execute:
 make push
 ```
 
-## Prerequisites to run locally
-
-- Docker installed
-- A Docker container registry to push the App image which you will have to replace in the Makefile
-
 ## Prerequisites to deploy on Kubernetes
 
 As mentioned earler, you will first need to provision a Kubernetes cluster or have one already running. 
 
 You then to need to have:
 
+- Docker installed
+- Push your image to a Docker container registry which you have to reference in your deployment chart
 - Helm installed
 - An already provisioned Elastic Load Balancer on AWS by creating an NGINX Ingress Controller
 
