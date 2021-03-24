@@ -37,7 +37,7 @@ REQUIRED = [
     'python-dotenv==0.10.2',
     'requests==2.22.0',
     'requests-futures==1.0.0',    
-    'rsa==3.4.2',
+    'rsa==4.1',
     'Werkzeug==0.16.1',
 ]
 
