@@ -31,7 +31,7 @@ REQUIRED = [
     'marshmallow==3.2.2',
     'Metaphone==0.6',
     'munch==2.3.2',    
-    'py==1.5.2',
+    'py==1.10.0',
     'pytest==5.4.3',
     'python-dateutil==2.8.0',
     'python-dotenv==0.10.2',
