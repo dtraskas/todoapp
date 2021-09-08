@@ -24,7 +24,7 @@ VERSION = '0.0.0'
 REQUIRED = [
     'attrs==19.3.0',
     'Flask==1.1.2',
-    'flask-restx==0.2.0',
+    'flask-restx==0.5.1',
     'gunicorn==19.9.0',
     'jsonschema==3.0.1',
     'lazy-object-proxy==1.3.1',
